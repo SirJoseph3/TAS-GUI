@@ -24,8 +24,32 @@ Modern Electron + React interface for AI-powered video enhancement toolkit speci
 ### Developer Setup
 ```bash
 cd new-gui
+
+# Using npm
 npm install
 npm run dev
+
+# Or using bun (faster)
+bun install
+bun run dev
+```
+
+### Building the Executable
+```bash
+cd new-gui
+
+# 1. Prepare dependencies (copies required files to gerekenler folder)
+powershell -ExecutionPolicy Bypass -File scripts/prepare-build.ps1
+
+# 2. Build renderer (React frontend)
+npm run build:renderer
+
+# 3. Build Electron app (creates .exe installer)
+npm run build:electron
+
+# Output will be in new-gui/dist/
+# - TAS-NewGUI-Setup-x.x.x.exe (installer)
+# - win-unpacked/ (portable version)
 ```
 
 ## 💻 System Requirements
