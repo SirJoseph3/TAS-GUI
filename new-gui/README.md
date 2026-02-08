@@ -24,8 +24,14 @@ Modern Electron + React interface for AI-powered video enhancement toolkit speci
 ### Developer Setup
 ```bash
 cd new-gui
+
+# Using npm
 npm install
 npm run dev
+
+# Or using bun (faster)
+bun install
+bun run dev
 ```
 
 ## 💻 System Requirements
