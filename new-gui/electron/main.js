@@ -27,9 +27,15 @@ function getPreviewPath() {
 // Python executable path detection
 function getPythonPath() {
   const isDev = !app.isPackaged;
-  
+
   if (isDev) {
-    // Development mode - use parent folder python.exe
+    // Development mode - check resources folder first (for developers who downloaded TAS)
+    const resourcesPython = path.join(__dirname, '..', 'resources', 'python.exe');
+    if (fs.existsSync(resourcesPython)) {
+      return resourcesPython;
+    }
+
+    // Fallback: use parent folder python.exe (original dev setup)
     const devPython = path.join(__dirname, '..', '..', 'python.exe');
     if (fs.existsSync(devPython)) {
       return devPython;
@@ -38,11 +44,11 @@ function getPythonPath() {
   } else {
     // Production mode - use bundled Python in gerekenler folder
     const pythonExe = path.join(process.resourcesPath, 'gerekenler', 'python.exe');
-    
+
     if (fs.existsSync(pythonExe)) {
       return pythonExe;
     }
-    
+
     // Fallback to system Python
     return 'python';
   }
@@ -51,8 +57,14 @@ function getPythonPath() {
 // Get main.py path
 function getMainScriptPath() {
   const isDev = !app.isPackaged;
-  
+
   if (isDev) {
+    // Check resources folder first
+    const resourcesMain = path.join(__dirname, '..', 'resources', 'main.py');
+    if (fs.existsSync(resourcesMain)) {
+      return resourcesMain;
+    }
+    // Fallback to parent folder
     return path.join(__dirname, '..', '..', 'main.py');
   } else {
     return path.join(process.resourcesPath, 'gerekenler', 'main.py');
@@ -62,8 +74,14 @@ function getMainScriptPath() {
 // Get image_upscale_cli.py path
 function getImageUpscaleScriptPath() {
   const isDev = !app.isPackaged;
-  
+
   if (isDev) {
+    // Check resources folder first
+    const resourcesScript = path.join(__dirname, '..', 'resources', 'image_upscale_cli.py');
+    if (fs.existsSync(resourcesScript)) {
+      return resourcesScript;
+    }
+    // Fallback to parent folder
     return path.join(__dirname, '..', '..', 'image_upscale_cli.py');
   } else {
     return path.join(process.resourcesPath, 'gerekenler', 'image_upscale_cli.py');
@@ -89,50 +107,50 @@ function createWindow() {
     icon: path.join(__dirname, '..', 'assets', 'icon.png')
   });
 
-// Live preview image (preview.jpg written by the Python pipeline when --preview is enabled)
-ipcMain.handle('get-preview-image', async () => {
-  try {
-    const previewPath = getPreviewPath();
-    if (!fs.existsSync(previewPath)) {
+  // Live preview image (preview.jpg written by the Python pipeline when --preview is enabled)
+  ipcMain.handle('get-preview-image', async () => {
+    try {
+      const previewPath = getPreviewPath();
+      if (!fs.existsSync(previewPath)) {
+        return null;
+      }
+
+      const buf = fs.readFileSync(previewPath);
+      return `data:image/jpeg;base64,${buf.toString('base64')}`;
+    } catch {
       return null;
     }
+  });
 
-    const buf = fs.readFileSync(previewPath);
-    return `data:image/jpeg;base64,${buf.toString('base64')}`;
-  } catch {
-    return null;
-  }
-});
+  // Read video file and return as blob URL compatible format
+  ipcMain.handle('read-video-file', async (event, filePath) => {
+    try {
+      if (!filePath || !fs.existsSync(filePath)) {
+        return { success: false, error: 'File not found' };
+      }
 
-// Read video file and return as blob URL compatible format
-ipcMain.handle('read-video-file', async (event, filePath) => {
-  try {
-    if (!filePath || !fs.existsSync(filePath)) {
-      return { success: false, error: 'File not found' };
+      const ext = path.extname(filePath).toLowerCase();
+      const mimeTypes = {
+        '.mp4': 'video/mp4',
+        '.webm': 'video/webm',
+        '.mkv': 'video/x-matroska',
+        '.avi': 'video/x-msvideo',
+        '.mov': 'video/quicktime',
+        '.m4v': 'video/mp4'
+      };
+
+      const mimeType = mimeTypes[ext] || 'video/mp4';
+      const buffer = fs.readFileSync(filePath);
+      const base64 = buffer.toString('base64');
+
+      return {
+        success: true,
+        dataUrl: `data:${mimeType};base64,${base64}`
+      };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-
-    const ext = path.extname(filePath).toLowerCase();
-    const mimeTypes = {
-      '.mp4': 'video/mp4',
-      '.webm': 'video/webm',
-      '.mkv': 'video/x-matroska',
-      '.avi': 'video/x-msvideo',
-      '.mov': 'video/quicktime',
-      '.m4v': 'video/mp4'
-    };
-
-    const mimeType = mimeTypes[ext] || 'video/mp4';
-    const buffer = fs.readFileSync(filePath);
-    const base64 = buffer.toString('base64');
-
-    return {
-      success: true,
-      dataUrl: `data:${mimeType};base64,${base64}`
-    };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
+  });
 
   // Load the app
   const isDev = !app.isPackaged;
@@ -146,7 +164,7 @@ ipcMain.handle('read-video-file', async (event, filePath) => {
   // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    
+
     // Maximize on startup for better UX
     mainWindow.maximize();
   });
@@ -224,7 +242,7 @@ ipcMain.handle('start-processing', async (event, args) => {
 
   const pythonPath = getPythonPath();
   const mainScript = getMainScriptPath();
-  
+
   // args is now a string array
   const cmdArgs = Array.isArray(args) ? args : [];
 
@@ -246,11 +264,11 @@ ipcMain.handle('start-processing', async (event, args) => {
     pythonProcess.stdout.on('data', (data) => {
       const text = data.toString();
       stdoutBuffer += text;
-      
+
       // Process line by line
       const lines = stdoutBuffer.split(/\r\n|\n|\r/);
       stdoutBuffer = lines.pop(); // Keep incomplete line
-      
+
       lines.forEach(line => {
         if (line.trim()) {
           mainWindow?.webContents.send('process-output', { type: 'stdout', data: line });
@@ -261,10 +279,10 @@ ipcMain.handle('start-processing', async (event, args) => {
     pythonProcess.stderr.on('data', (data) => {
       const text = data.toString();
       stderrBuffer += text;
-      
+
       const lines = stderrBuffer.split(/\r\n|\n|\r/);
       stderrBuffer = lines.pop();
-      
+
       lines.forEach(line => {
         if (line.trim()) {
           mainWindow?.webContents.send('process-output', { type: 'stderr', data: line });
@@ -291,7 +309,7 @@ ipcMain.handle('start-processing', async (event, args) => {
 ipcMain.handle('stop-processing', async () => {
   if (pythonProcess) {
     pythonProcess.kill('SIGTERM');
-    
+
     // Force kill after 5 seconds if still running
     setTimeout(() => {
       if (pythonProcess) {
@@ -299,7 +317,7 @@ ipcMain.handle('stop-processing', async () => {
         pythonProcess = null;
       }
     }, 5000);
-    
+
     return { success: true };
   }
   return { success: false, error: 'No process running' };
@@ -309,6 +327,11 @@ ipcMain.handle('stop-processing', async () => {
 function getPresetsDir() {
   const isDev = !app.isPackaged;
   if (isDev) {
+    // Check resources folder first
+    const resourcesPresets = path.join(__dirname, '..', 'resources', 'presets');
+    if (fs.existsSync(resourcesPresets)) {
+      return resourcesPresets;
+    }
     return path.join(__dirname, '..', '..', 'presets');
   }
   return path.join(process.resourcesPath, 'gerekenler', 'presets');
@@ -379,7 +402,7 @@ ipcMain.handle('start-image-upscale', async (event, args) => {
 
   const pythonPath = getPythonPath();
   const imageUpscaleScript = getImageUpscaleScriptPath();
-  
+
   // args is now a string array
   const cmdArgs = Array.isArray(args) ? args : [];
 
@@ -401,11 +424,11 @@ ipcMain.handle('start-image-upscale', async (event, args) => {
     imageUpscaleProcess.stdout.on('data', (data) => {
       const text = data.toString();
       stdoutBuffer += text;
-      
+
       // Process line by line
       const lines = stdoutBuffer.split(/\r\n|\n|\r/);
       stdoutBuffer = lines.pop(); // Keep incomplete line
-      
+
       lines.forEach(line => {
         if (line.trim()) {
           mainWindow?.webContents.send('process-output', { type: 'stdout', data: line });
@@ -416,10 +439,10 @@ ipcMain.handle('start-image-upscale', async (event, args) => {
     imageUpscaleProcess.stderr.on('data', (data) => {
       const text = data.toString();
       stderrBuffer += text;
-      
+
       const lines = stderrBuffer.split(/\r\n|\n|\r/);
       stderrBuffer = lines.pop();
-      
+
       lines.forEach(line => {
         if (line.trim()) {
           mainWindow?.webContents.send('process-output', { type: 'stderr', data: line });
@@ -446,7 +469,7 @@ ipcMain.handle('start-image-upscale', async (event, args) => {
 ipcMain.handle('stop-image-upscale', async () => {
   if (imageUpscaleProcess) {
     imageUpscaleProcess.kill('SIGTERM');
-    
+
     // Force kill after 5 seconds if still running
     setTimeout(() => {
       if (imageUpscaleProcess) {
@@ -454,7 +477,7 @@ ipcMain.handle('stop-image-upscale', async () => {
         imageUpscaleProcess = null;
       }
     }, 5000);
-    
+
     return { success: true };
   }
   return { success: false, error: 'No image upscale process running' };
