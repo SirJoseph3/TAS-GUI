@@ -34,6 +34,9 @@ new-gui/gerekenler/
 *.ps1
 *.spec
 
+# Exception: allow new-gui scripts
+!new-gui/scripts/
+
 # --- IDE/Editor ---
 .idea/
 .vscode/
