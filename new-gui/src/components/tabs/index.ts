@@ -1,0 +1,12 @@
+export { GeneralTab } from './GeneralTab.tsx';
+export { UpscaleTab } from './UpscaleTab.tsx';
+export { InterpolateTab } from './InterpolateTab.tsx';
+export { ObjectDetectionTab } from './ObjectDetectionTab.tsx';
+export { ImageUpscaleTab } from './ImageUpscaleTab.tsx';
+export { RestoreTab } from './RestoreTab.tsx';
+export { SceneTab } from './SceneTab.tsx';
+export { DedupTab } from './DedupTab.tsx';
+export { SegmentTab } from './SegmentTab.tsx';
+export { DepthTab } from './DepthTab.tsx';
+export { EncodingTab } from './EncodingTab.tsx';
+export { PerformanceTab } from './PerformanceTab.tsx';

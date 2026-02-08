@@ -1,0 +1,58 @@
+# ========================================
+# TAS-GUI Repository .gitignore
+# ========================================
+
+# --- Excluded Large Folders ---
+weights/
+custom_models/
+Lib/
+TAS-253-Windows/
+output/
+ffmpeg/
+share/
+presets/
+
+# --- Build/Distribution ---
+build/
+dist/
+dist_installer/
+installer/
+__pycache__/
+*.pyc
+*.pyo
+
+# --- New-GUI Specific ---
+new-gui/node_modules/
+new-gui/dist/
+new-gui/dist-renderer/
+new-gui/gerekenler/
+
+# --- Executables ---
+*.exe
+
+# --- IDE/Editor ---
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Logs & Temp ---
+*.log
+*.tmp
+*.temp
+.cache/
+
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+
+# --- Agent/AI Folders ---
+.agent.md
+.zencoder/
+.zenflow/
+
+# --- Test Files ---
+test_signal.txt

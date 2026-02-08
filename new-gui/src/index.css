@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body, #root {
+    @apply h-full w-full overflow-hidden;
+  }
+  
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Allow text selection in input fields and text areas */
+  input, textarea, [contenteditable] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background-secondary rounded;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-active rounded hover:bg-border-hover;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-primary/30 text-text-primary;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface/80 backdrop-blur-lg border border-border rounded-lg;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg 
+           font-medium transition-all duration-200 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-surface hover:bg-surface-hover text-text-primary rounded-lg 
+           font-medium transition-all duration-200 active:scale-95
+           border border-border;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-error/20 hover:bg-error/30 text-error rounded-lg 
+           font-medium transition-all duration-200 active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-background-secondary border border-border rounded-lg
+           text-text-primary placeholder:text-text-muted
+           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+           transition-all duration-200;
+  }
+
+  .select-field {
+    @apply w-full px-4 py-2.5 bg-background-secondary border border-border rounded-lg
+           text-text-primary appearance-none cursor-pointer
+           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+           transition-all duration-200;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  .checkbox-field {
+    @apply w-5 h-5 rounded border-border bg-background-secondary 
+           text-primary focus:ring-primary focus:ring-offset-0
+           cursor-pointer transition-all duration-200;
+  }
+
+  .slider-field {
+    @apply w-full h-2 bg-background-secondary rounded-lg appearance-none cursor-pointer;
+  }
+
+  .slider-field::-webkit-slider-thumb {
+    @apply w-4 h-4 bg-primary rounded-full appearance-none transition-transform duration-200;
+  }
+
+  .slider-field::-webkit-slider-thumb:hover {
+    @apply scale-125;
+  }
+
+  .card {
+    @apply bg-surface border border-border rounded-xl p-6;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-text-primary mb-4 flex items-center gap-2;
+  }
+
+  .tab-active {
+    @apply bg-primary text-white;
+  }
+
+  .tab-inactive {
+    @apply bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary;
+  }
+}
+
+/* Animations */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Drag region for frameless window */
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Code/Log styling */
+.log-container {
+  @apply font-mono text-sm bg-background-secondary rounded-lg p-4 overflow-auto;
+  max-height: 300px;
+}
+
+.log-line {
+  @apply py-0.5;
+}
+
+.log-info { @apply text-text-secondary; }
+.log-success { @apply text-success; }
+.log-warning { @apply text-warning; }
+.log-error { @apply text-error; }
+
+/* Progress bar animation */
+.progress-bar-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  0% { background-position: 1rem 0; }
+  100% { background-position: 0 0; }
+}

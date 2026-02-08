@@ -1,0 +1,33 @@
+{
+    "include": [
+        "libs"
+    ],
+    "extraPaths": [
+        "./libs/spandrel",
+        "./libs/spandrel_extra_arches",
+    ],
+    "exclude": [
+        "**/__pycache__"
+    ],
+    "typeCheckingMode": "strict",
+    "reportMissingTypeStubs": "warning",
+    "useLibraryCodeForTypes": false,
+    "reportImportCycles": "error",
+    "reportIncompatibleMethodOverride": "error",
+    "reportIncompatibleVariableOverride": "error",
+    "reportOverlappingOverload": "error",
+    "reportPrivateImportUsage": "error",
+    "reportUninitializedInstanceVariable": "error",
+    "reportUnusedClass": "warning",
+    "reportUnusedFunction": "warning",
+    "reportUnusedImport": "warning",
+    "reportUnusedVariable": "warning",
+    "reportMissingTypeArgument": "none",
+    "reportUnknownArgumentType": "none",
+    "reportUnknownLambdaType": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownParameterType": "none",
+    "reportUnknownVariableType": "none",
+    "reportMissingParameterType": "none",
+    "reportConstantRedefinition": "none",
+}
