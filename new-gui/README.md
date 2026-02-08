@@ -21,7 +21,12 @@ Modern Electron + React interface for AI-powered video enhancement toolkit speci
 2. Run the installer
 3. Dependencies will be installed automatically on first launch
 
-### Developer Setup
+> **Note:** The installer includes all required dependencies (Python, FFmpeg, AI models, etc.) for video processing.
+
+### Developer Setup (GUI Development Only)
+
+> ⚠️ **Important:** This setup is for **developing the GUI interface only**. 
+> To process videos, you need the full [TheAnimeScripter](https://github.com/NevermindNilas/TheAnimeScripter) installation or use the pre-built installer above.
 ```bash
 cd new-gui
 
