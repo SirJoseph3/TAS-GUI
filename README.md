@@ -68,11 +68,17 @@ npm run dev
 - Check your internet connection
 - Temporarily disable antivirus software
 
-## 📄 License
+## � License & Attribution
 
-This project is licensed under [GNU Affero General Public License v3.0](LICENSE).
+This project is a fork/derivative of [TheAnimeScripter](https://github.com/NevermindNilas/TheAnimeScripter) 
+by [NevermindNilas](https://github.com/NevermindNilas), licensed under [AGPL-3.0](LICENSE).
+
+**Modifications made:**
+- New Electron + React GUI interface
+- Build system improvements
+- CeLux dependency fixes
 
 ## 🙏 Credits
 
-- [TheAnimeScripter](https://github.com/NevermindNilas/TheAnimeScripter) - Original project
+- [TheAnimeScripter](https://github.com/NevermindNilas/TheAnimeScripter) - Original project by NevermindNilas
 - All AI model developers
